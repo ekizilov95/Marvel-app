@@ -17,9 +17,7 @@
     }
     &__info {
         display: grid;
-        grid-template-rows: minmax(29px, auto) 90px 38px;
         row-gap: 10px;
-        padding-top: 3px;
     }
     &__name {
         font-weight: bold;
