@@ -29,7 +29,8 @@ export class MarvelService {
             description: char.description,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url,
-            id: char.id
+            id: char.id,
+            stories: char.stories.items
         }
     }
 }

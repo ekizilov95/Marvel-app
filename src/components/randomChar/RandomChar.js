@@ -6,11 +6,6 @@ import Spinner from '../Spinner/Spinner';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 
 class RandomChar extends Component {
-    constructor(props) {
-        super(props);
-        this.updateCharacter();
-    }
-
     state = {
         char: {},
         loading: true,
@@ -19,8 +14,17 @@ class RandomChar extends Component {
 
     marvelService = new MarvelService();
 
+    componentDidMount() {
+        this.updateCharacter();
+    }
+    
+    onCharLoading() {
+        this.setState({loading: true})
+    }
+
     updateCharacter = () => {
         let id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        this.onCharLoading();
         this.marvelService.getCharacter(id)
         .then(res => {
             this.setState({char: res, loading: false})
@@ -30,15 +34,15 @@ class RandomChar extends Component {
 
     render() {
         const {char, loading, error} = this.state;
-        const content = !(loading || error)? <Content char={char}/> : null;
         const spinner = loading ? <Spinner/> : null;
         const errorMessage = error ? <ErrorMessage/> : null;
+        const content = !(loading || error)? <Content char={char}/> : null;
 
         return (
             <div className="randomchar">
-                {content}
                 {spinner}
                 {errorMessage}
+                {content}
 
                 <div className="randomchar__static">
                     <p className="randomchar__title">
@@ -48,7 +52,7 @@ class RandomChar extends Component {
                     <p className="randomchar__title">
                         Or choose another one
                     </p>
-                    <button className="button button__main">
+                    <button className="button button__main" onClick={this.updateCharacter}>
                         <div className="inner">try it</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
@@ -60,10 +64,12 @@ class RandomChar extends Component {
 
 const Content = ({char}) => {
     const {image, name, description, homepage, wiki} = char;
-
+    const noImage = image.includes('image_not_available');
+    const imageClass =  noImage ? 'randomchar__img randomchar__img_not-available' : 'randomchar__img';
+    
     return (
         <div className="randomchar__block">
-            <img src={image} alt="Random character" className="randomchar__img"/>
+            <img src={image} alt="Random character" className={imageClass} />
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
