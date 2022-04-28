@@ -1,44 +1,36 @@
 import './charInfo.scss';
-import thor from '../../resources/img/thor.jpeg';
-import { Component } from 'react/cjs/react.development';
+import { useState, useEffect } from 'react';
 import { MarvelService } from '../../services/Marvel';
 import Skeleton from '../skeleton/Skeleton';
 
-class CharInfo extends Component {
-    state = {
-        char: null,
+const CharInfo = ({currentCharId}) => {
+    const [char, setCurrentCharId] = useState(null)
+    const marvelService = new MarvelService();
+
+    useEffect(() => {
+        onChangeCharacter(currentCharId);
+    }, [currentCharId]);
+
+    const onChangeCharacter = id => {
+        if(!id) return 
+
+        marvelService.getCharacter(id)
+        .then(res => setCurrentCharId(res))
+        .catch(e => console.log(e))
     }
 
-    marvelService = new MarvelService();
-
-    componentDidUpdate(prevProps) {
-        if(prevProps.currentCharId !== this.props.currentCharId) {
-            this.onchangeCharacter(this.props.currentCharId);
-        }
-    }
-
-    onchangeCharacter = id => {
-        this.marvelService.getCharacter(id)
-        .then(res => this.setState({char: res}))
-    }
-
-    render() {
-        const {char} = this.state;
-        const content = char ? <Content char={char}/> : null;
-        const skeleton = !char ? <Skeleton /> : null;
-        
-        return (
-            <div className="char__info">
-                {skeleton}
-                {content}
-            </div>
-        )
-    }
+    const content = char ? <Content char={char}/> : null;
+    const skeleton = !char ? <Skeleton /> : null;
+    
+    return (
+        <div className="char__info">
+            {skeleton}
+            {content}
+        </div>
+    )
 }
 
 const Content = ({char}) => {
-    console.log(char.stories.length );
-    
     return (
         <>
             <div className="char__basics">
